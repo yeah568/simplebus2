@@ -15,22 +15,21 @@ export class HomePage {
       inputs: [
         {
           name: 'stopno',
-          placeholder: 'Stop Number'
+          placeholder: 'Stop Number',
+          type: 'number'
         }, {
           name: 'route',
-          placeholder: 'Bus Route'
+          placeholder: 'Bus Route',
+          type: 'number'
         }
       ],
       buttons: [
         {
-          text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
+          text: 'Cancel'
         }, {
           text: 'Save',
           handler: data => {
-            console.log('Saved clicked');
+            console.log(data);
           }
         }
       ]

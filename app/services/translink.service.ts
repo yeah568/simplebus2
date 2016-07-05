@@ -9,19 +9,17 @@ export class TranslinkService {
   private API_ROOT = '' // 'http://api.translink.ca'
   private API_URL = `${this.API_ROOT}/rttiapi/v1`;
   private API_KEY = '';
-  private options: RequestOptions;
-  
+  private headers: Headers;
+
   constructor(private http: Http) { 
-    const headers = new Headers({ 
+    this.headers = new Headers({ 
       'Content-Type': 'application/JSON',
       'Accept': 'application/JSON'
     });
-
-    this.options = new RequestOptions({ headers: headers });
   }
 
   // https://developer.translink.ca/ServicesRtti/ApiReference#Stops
-  public getStop(stopNo: number, filters) {
+  public getStop(stopNo: number, filters?) {
     const params = new URLSearchParams();
     
     params.set('apikey', this.API_KEY);
@@ -31,21 +29,43 @@ export class TranslinkService {
     filters.routeNo ? params.set('routeNo', filters.routeNo) : null;
 
 
-    return this.http.get(`${this.API_URL}/stops/${stopNo}?apiKey=${this.API_KEY}`, this.options)
+    return this.http.get(`${this.API_URL}/stops/${stopNo}`, { headers: this.headers, search: params })
                .toPromise()
                .then(response => response.json())
                .catch(err => console.log(err));
   }
 
-  public getStopEstimates(stopNo: number, filters) {
+  public getStopEstimates(stopNo: number, filters?) {
+    const params = new URLSearchParams();
 
+    params.set('apikey', this.API_KEY);
+    filters.count ? params.set('count', filters.count) : null;
+    filters.timeFrame ? params.set('timeFrame', filters.timeFrame) : null;
+    filters.routeNo ? params.set('routeNo', filters.routeNo) : null;
+
+    return this.http.get(`${this.API_URL}/stops/${stopNo}/estimate`, { headers: this.headers, search: params })
+           .toPromise()
+           .then(response => response.json())
+           .catch(err => console.log(err));
   }
 
-  public getBuses(busNo: number, filters) {
+  public getBuses(busNo?: number, filters?) {
+    const params = new URLSearchParams();
 
+    params.set('apikey', this.API_KEY);
+    filters.stopNo ? params.set('stopNo', filters.stopNo) : null;
+    filters.routeNo ? params.set('routeNo', filters.routeNo) : null;
+
+    return this.http.get(`${this.API_URL}/buses${busNo ? '/' + busNo : ''}`, { headers: this.headers, search: params})
+               .toPromise()
+               .then(response => response.json())
+               .catch(err => console.log(err));
   }
 
   public getRoutes(routeNo: string, filters) {
 
   }
+
+
+
 }
